@@ -10,7 +10,7 @@ Installation
 ------------
 
 Add ``querycount`` to your ``INSTALLED_APPS``, then add
-``querycount.midddleware.QueryCountMiddleware`` do your ``MIDDLEWARE_CLASSES``.
+``querycount.middleware.QueryCountMiddleware`` do your ``MIDDLEWARE_CLASSES``.
 
 
 License
