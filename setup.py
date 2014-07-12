@@ -3,8 +3,8 @@ from setuptools import setup
 setup(
     name="django-querycount",
     version="0.0.0",
-    author="Brad Montgomery, Morgan Phillips",
-    author_email="brad@bradmontgomery.net, winter2718@gmail.com",
+    author="Brad Montgomery",
+    author_email="brad@bradmontgomery.net",
     description=("Middleware that Prints the number of DB queries to the runserver console."),
     install_requires=[],
     license="MIT",
