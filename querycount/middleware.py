@@ -1,3 +1,4 @@
+import re
 import sys
 import timeit
 
@@ -27,6 +28,10 @@ class QueryCountMiddleware(object):
             self.yellow = termcolors.make_style(opts=('bold',), fg='yellow')
             self.green = termcolors.make_style(fg='green')
 
+            # query type detection regex
+            # TODO: make stats classification regex more robust
+            self.read_query_regex = re.compile("SELECT .*")
+
             self.threshold = getattr(
                 settings,
                 'QUERYCOUNT_THRESHOLDS',
@@ -43,10 +48,10 @@ class QueryCountMiddleware(object):
     def _count_queries(self, which):
         for c in connections.all():
             for q in c.queries:
-                if q['sql'].split()[0].upper() == 'SELECT':
-                    self.stats[which][c.alias]["reads"] += 1
+                if self.read_query_regex.search(q['sql']) is not None:
+                    self.stats[which][c.alias]['reads'] += 1
                 else:
-                    self.stats[which][c.alias]["writes"] += 1
+                    self.stats[which][c.alias]['writes'] += 1
                 self.stats[which][c.alias]['total'] += 1
 
     def process_request(self, request):
