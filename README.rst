@@ -12,6 +12,8 @@ console output.
 Installation
 ------------
 
+    pip install django-querycount
+
 Add ``querycount`` to your ``INSTALLED_APPS``, then add
 ``querycount.middleware.QueryCountMiddleware`` do your ``MIDDLEWARE_CLASSES``.
 
