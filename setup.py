@@ -1,8 +1,9 @@
 from setuptools import setup
+from querycount import __version__
 
 setup(
     name="django-querycount",
-    version="0.0.0",
+    version=__version__,
     author="Brad Montgomery",
     author_email="brad@bradmontgomery.net",
     description=("Middleware that Prints the number of DB queries to the runserver console."),
