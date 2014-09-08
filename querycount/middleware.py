@@ -34,9 +34,15 @@ class QueryCountMiddleware(object):
 
             self.threshold = getattr(
                 settings,
-                'QUERYCOUNT_THRESHOLDS',
-                {'MEDIUM': 50, 'HIGH': 200}
-            )
+                'QUERYCOUNT_THRESHOLDS', {})
+            if self.threshold:
+              self.threshold['MEDIUM'] = self.threshold.get('MEDIUM', 50)
+              self.threshold['HIGH'] = self.threshold.get('HIGH', 200)
+              self.threshold['MIN_TIME_TO_LOG'] = self.threshold.get('MIN_TIME_TO_LOG', 0)
+              self.threshold['MIN_QUERY_COUNT_TO_LOG'] = self.threshold.get('MIN_QUERY_COUNT_TO_LOG', 0)
+
+            else:
+              self.threshold = {'MEDIUM': 50, 'HIGH': 200, 'MIN_TIME_TO_LOG':0, 'MIN_QUERY_COUNT_TO_LOG':0}
             super(QueryCountMiddleware, self).__init__(*args, **kwargs)
 
     def _reset_stats(self):
@@ -130,5 +136,6 @@ class QueryCountMiddleware(object):
         sum_output = self._colorize(sum_output, count)
 
         # runserver just prints its output to sys.stderr, so we'll do that too.
-        sys.stderr.write(output)
-        sys.stderr.write(sum_output)
+        if elapsed >= self.threshold['MIN_TIME_TO_LOG'] and count >= self.threshold['MIN_QUERY_COUNT_TO_LOG']:
+            sys.stderr.write(output)
+            sys.stderr.write(sum_output)

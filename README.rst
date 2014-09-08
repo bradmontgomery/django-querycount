@@ -17,9 +17,20 @@ Installation
 Add ``querycount`` to your ``INSTALLED_APPS``, then add
 ``querycount.middleware.QueryCountMiddleware`` do your ``MIDDLEWARE_CLASSES``.
 
+Notice that django-querycount is hard coded to work only in DEBUG mode set to true
+
+Settings
+--------
+set QUERYCOUNT_THRESHOLDS in your settings file to your preference
+defaults to: {'MEDIUM': 50, 'HIGH': 200, 'MIN_TIME_TO_LOG':0, 'MIN_QUERY_COUNT_TO_LOG':0}
+
 
 License
 -------
 
 This code is distributed under the terms of the MIT license.
 
+Testing
+-------
+
+Works only in context of a django installation venv: cd querycount/tests && python test.py 
