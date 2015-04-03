@@ -36,13 +36,13 @@ Testing
 Works only in context of a django installation venv: cd querycount/tests && python test.py
 
 
-.. |version| image:: http://img.shields.io/pypi/v/django-redis-metrics.svg?style=flat-square
+.. |version| image:: http://img.shields.io/pypi/v/django-querycount.svg?style=flat-square
     :alt: Current Release
-    :target: https://pypi.python.org/pypi/django-redis-metrics/
+    :target: https://pypi.python.org/pypi/django-querycount/
 
-.. |license| image:: http://img.shields.io/pypi/l/django-redis-metrics.svg?style=flat-square
+.. |license| image:: http://img.shields.io/pypi/l/django-querycount.svg?style=flat-square
     :alt: License
-    :target: https://pypi.python.org/pypi/django-redis-metrics/
+    :target: https://pypi.python.org/pypi/django-querycount/
 
 .. |screenshot| image:: screenshot.png
     :alt: django-querycount in action
