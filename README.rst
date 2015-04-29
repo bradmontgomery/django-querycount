@@ -15,14 +15,24 @@ Installation
 
     pip install django-querycount
 
-Just add ``querycount.middleware.QueryCountMiddleware`` to your ``MIDDLEWARE_CLASSES``.
+Just add ``querycount.middleware.QueryCountMiddleware`` to your
+``MIDDLEWARE_CLASSES``.
 
 Notice that django-querycount is hard coded to work only in DEBUG mode set to true
 
 Settings
 --------
-set QUERYCOUNT_THRESHOLDS in your settings file to your preference
-defaults to: {'MEDIUM': 50, 'HIGH': 200, 'MIN_TIME_TO_LOG':0, 'MIN_QUERY_COUNT_TO_LOG':0}
+
+The ``QUERYCOUNT_THRESHOLDS`` settings will determine how many queries are
+interpreted as high or medium (and the color-coded output). The
+defaults for these values are::
+
+    {
+        'MEDIUM': 50,
+        'HIGH': 200,
+        'MIN_TIME_TO_LOG':0,
+        'MIN_QUERY_COUNT_TO_LOG':0
+    }
 
 
 License
