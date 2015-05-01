@@ -51,15 +51,21 @@ class QueryCountMiddleware(object):
                     self.stats[which][c.alias]['writes'] += 1
                 self.stats[which][c.alias]['total'] += 1
 
+    def _ignore(self, path):
+        """Check to see if we should ignore the request."""
+        return any([
+            re.match(pattern, path) for pattern in QC_SETTINGS['IGNORE_PATTERNS']
+        ])
+
     def process_request(self, request):
-        if settings.DEBUG:
+        if settings.DEBUG and not self._ignore(request.path):
             self.host = request.META.get('HTTP_HOST', None)
             self.request_path = request.path
             self._start_time = timeit.default_timer()
             self._count_queries("request")
 
     def process_response(self, request, response):
-        if settings.DEBUG:
+        if settings.DEBUG and not self._ignore(request.path):
             self.request_path = request.path
             self._end_time = timeit.default_timer()
             self._count_queries("response")

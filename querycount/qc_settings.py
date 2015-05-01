@@ -25,7 +25,3 @@ if getattr(settings, 'QUERYCOUNT', False) and 'IGNORE_PATTERNS' in settings.QUER
 # Support the old-style settings
 if getattr(settings, 'QUERYCOUNT_THRESHOLDS', False):
     QC_SETTINGS['THRESHOLDS'] = settings.QUERYCOUNT_THRESHOLDS
-
-
-from pprint import pprint
-pprint(QC_SETTINGS)

@@ -23,15 +23,33 @@ Notice that django-querycount is hard coded to work only in DEBUG mode set to tr
 Settings
 --------
 
-The ``QUERYCOUNT_THRESHOLDS`` settings will determine how many queries are
-interpreted as high or medium (and the color-coded output). The
-defaults for these values are::
+There are two possible settings for this app: The first defines threshold
+values used to color output, while the second allows you customize requests
+that will be ignored by the middleware.  The default settings are::
 
-    {
-        'MEDIUM': 50,
-        'HIGH': 200,
-        'MIN_TIME_TO_LOG':0,
-        'MIN_QUERY_COUNT_TO_LOG':0
+    QUERYCOUNT {
+        'THRESHOLDS': {
+            'MEDIUM': 50,
+            'HIGH': 200,
+            'MIN_TIME_TO_LOG':0,
+            'MIN_QUERY_COUNT_TO_LOG':0
+        },
+        'IGNORE_PATTERNS': [],
+    }
+
+
+The ``QUERYCOUNT['THRESHOLDS']`` settings will determine how many queries are
+interpreted as high or medium (and the color-coded output). In previous versions
+of this app, this settings was called ``QUERYCOUNT_THRESHOLDS`` and that setting
+is still supported.
+
+The ``QUERYCOUT['IGNORE_PATTERNS']`` setting allows you to define a list of
+regexp patterns that get applied to each request's path. If there is a match,
+the middleware will not be applied to that request. For example, the following
+setting would bypass the querycount middleware for all requests to the admin::
+
+    QUERYCOUNT = {
+        'IGNORE_PATTERNS': [r'^/admin/']
     }
 
 
