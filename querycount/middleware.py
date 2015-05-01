@@ -6,6 +6,8 @@ from django.conf import settings
 from django.db import connections
 from django.utils import termcolors
 
+from . qc_settings import QC_SETTINGS
+
 
 class QueryCountMiddleware(object):
     """This middleware prints the number of database queries for each http
@@ -31,18 +33,7 @@ class QueryCountMiddleware(object):
             # query type detection regex
             # TODO: make stats classification regex more robust
             self.read_query_regex = re.compile("SELECT .*")
-
-            self.threshold = getattr(
-                settings,
-                'QUERYCOUNT_THRESHOLDS', {})
-            if self.threshold:
-              self.threshold['MEDIUM'] = self.threshold.get('MEDIUM', 50)
-              self.threshold['HIGH'] = self.threshold.get('HIGH', 200)
-              self.threshold['MIN_TIME_TO_LOG'] = self.threshold.get('MIN_TIME_TO_LOG', 0)
-              self.threshold['MIN_QUERY_COUNT_TO_LOG'] = self.threshold.get('MIN_QUERY_COUNT_TO_LOG', 0)
-
-            else:
-              self.threshold = {'MEDIUM': 50, 'HIGH': 200, 'MIN_TIME_TO_LOG':0, 'MIN_QUERY_COUNT_TO_LOG':0}
+            self.threshold = QC_SETTINGS['THRESHOLDS']
             super(QueryCountMiddleware, self).__init__(*args, **kwargs)
 
     def _reset_stats(self):
