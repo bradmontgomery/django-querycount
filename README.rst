@@ -1,5 +1,6 @@
-Django Querycount
+forked from Django Querycount
 =================
+add SQL statistic ignore pattern support. 
 
 |version| |license|
 
