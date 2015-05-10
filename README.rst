@@ -74,6 +74,13 @@ Testing
 Works only in context of a django installation venv: cd querycount/tests && python test.py
 
 
+Contributing
+------------
+
+Bug fixes and new features are welcome! Fork this project and send a Pull Request
+to have your work included. Be sure to add yourself to ``AUTHORS.rst``.
+
+
 .. |version| image:: http://img.shields.io/pypi/v/django-querycount.svg?style=flat-square
     :alt: Current Release
     :target: https://pypi.python.org/pypi/django-querycount/
