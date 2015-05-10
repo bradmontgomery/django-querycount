@@ -13,7 +13,7 @@ class QueryCountMiddleware(object):
     """This middleware prints the number of database queries for each http
     request and response. This code is adapted from: http://goo.gl/UUKN0r"""
 
-    read_query_regex = re.compile("SELECT .*")
+    READ_QUERY_REGEX = re.compile("SELECT .*")
 
     def __init__(self, *args, **kwargs):
         if settings.DEBUG:
@@ -47,7 +47,7 @@ class QueryCountMiddleware(object):
         for c in connections.all():
             for q in c.queries:
                 if not self._ignore_sql(q):
-                    if self.read_query_regex.search(q['sql']) is not None:
+                    if self.READ_QUERY_REGEX.search(q['sql']) is not None:
                         self.stats[which][c.alias]['reads'] += 1
                     else:
                         self.stats[which][c.alias]['writes'] += 1
