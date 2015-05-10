@@ -13,6 +13,8 @@ class QueryCountMiddleware(object):
     """This middleware prints the number of database queries for each http
     request and response. This code is adapted from: http://goo.gl/UUKN0r"""
 
+    READ_QUERY_REGEX = re.compile("SELECT .*")
+
     def __init__(self, *args, **kwargs):
         if settings.DEBUG:
             self.request_path = None
@@ -32,7 +34,6 @@ class QueryCountMiddleware(object):
 
             # query type detection regex
             # TODO: make stats classification regex more robust
-            self.read_query_regex = re.compile("SELECT .*")
             self.threshold = QC_SETTINGS['THRESHOLDS']
             super(QueryCountMiddleware, self).__init__(*args, **kwargs)
 
@@ -45,27 +46,34 @@ class QueryCountMiddleware(object):
     def _count_queries(self, which):
         for c in connections.all():
             for q in c.queries:
-                if self.read_query_regex.search(q['sql']) is not None:
-                    self.stats[which][c.alias]['reads'] += 1
-                else:
-                    self.stats[which][c.alias]['writes'] += 1
-                self.stats[which][c.alias]['total'] += 1
+                if not self._ignore_sql(q):
+                    if self.READ_QUERY_REGEX.search(q['sql']) is not None:
+                        self.stats[which][c.alias]['reads'] += 1
+                    else:
+                        self.stats[which][c.alias]['writes'] += 1
+                    self.stats[which][c.alias]['total'] += 1
 
-    def _ignore(self, path):
+    def _ignore_request(self, path):
         """Check to see if we should ignore the request."""
         return any([
-            re.match(pattern, path) for pattern in QC_SETTINGS['IGNORE_PATTERNS']
+            re.match(pattern, path) for pattern in QC_SETTINGS['IGNORE_REQUEST_PATTERNS']
+        ])
+
+    def _ignore_sql(self, query):
+        """Check to see if we should ignore the sql query."""
+        return any([
+            re.search(pattern, query['sql']) for pattern in QC_SETTINGS['IGNORE_SQL_PATTERNS']
         ])
 
     def process_request(self, request):
-        if settings.DEBUG and not self._ignore(request.path):
+        if settings.DEBUG and not self._ignore_request(request.path):
             self.host = request.META.get('HTTP_HOST', None)
             self.request_path = request.path
             self._start_time = timeit.default_timer()
             self._count_queries("request")
 
     def process_response(self, request, response):
-        if settings.DEBUG and not self._ignore(request.path):
+        if settings.DEBUG and not self._ignore_request(request.path):
             self.request_path = request.path
             self._end_time = timeit.default_timer()
             self._count_queries("response")
