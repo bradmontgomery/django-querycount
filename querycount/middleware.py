@@ -1,6 +1,7 @@
 import re
 import sys
 import timeit
+from collections import Counter
 
 from django.conf import settings
 from django.db import connections
@@ -44,6 +45,7 @@ class QueryCountMiddleware(object):
             self.stats["response"][alias] = {'writes': 0, 'reads': 0, 'total': 0}
 
     def _count_queries(self, which):
+        queries = Counter()  # Count individual queries, so we can warn about duplicates
         for c in connections.all():
             for q in c.queries:
                 if not self._ignore_sql(q):
@@ -52,6 +54,15 @@ class QueryCountMiddleware(object):
                     else:
                         self.stats[which][c.alias]['writes'] += 1
                     self.stats[which][c.alias]['total'] += 1
+                    queries[q['sql']] += 1
+
+            # We'll show the worst offender; i.e. the query with the most duplicates
+            duplicates = queries.most_common(1)
+            if duplicates:
+                sql, count = duplicates[0]
+                self.stats[which][c.alias]['duplicates'] = count
+            else:
+                self.stats[which][c.alias]['duplicates'] = 0
 
     def _ignore_request(self, path):
         """Check to see if we should ignore the request."""
@@ -88,21 +99,22 @@ class QueryCountMiddleware(object):
             else:
                 host_string = self.request_path
             output = self.white('\n{0}\n'.format(host_string))
-            output += "|------|-----------|----------|----------|----------|\n"
-            output += "| Type | Database  |   Reads  |  Writes  |  Totals  |\n"
-            output += "|------|-----------|----------|----------|----------|\n"
+            output += "|------|-----------|----------|----------|----------|------------|\n"
+            output += "| Type | Database  |   Reads  |  Writes  |  Totals  | Duplicates |\n"
+            output += "|------|-----------|----------|----------|----------|------------|\n"
 
         for db, stats in self.stats[which].items():
             if stats['total'] > 0:
-                line = "|{w}|{db}|{reads}|{writes}|{total}|\n".format(
+                line = "|{w}|{db}|{reads}|{writes}|{total}|{duplicates}|\n".format(
                     w=which.upper()[:4].center(6),
                     db=db.center(11),
                     reads=str(stats['reads']).center(10),
                     writes=str(stats['writes']).center(10),
-                    total=str(stats['total']).center(10)
+                    total=str(stats['total']).center(10),
+                    duplicates=str(stats['duplicates']).center(12)
                 )
                 output += self._colorize(line, stats['total'])
-            output += "|------|-----------|----------|----------|----------|\n"
+            output += "|------|-----------|----------|----------|----------|------------|\n"
         return output
 
     def _totals(self, which):
