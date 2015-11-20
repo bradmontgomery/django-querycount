@@ -14,8 +14,16 @@ QC_SETTINGS = {
         'HIGH': 200,
         'MIN_TIME_TO_LOG': 0,
         'MIN_QUERY_COUNT_TO_LOG': 0
-    }
+    },
+    'DISPLAY_DUPLICATES': None,
 }
+
+if getattr(settings, 'QUERYCOUNT', False) and 'DISPLAY_DUPLICATES' in settings.QUERYCOUNT:
+    duplicate_settings = settings.QUERYCOUNT['DISPLAY_DUPLICATES']
+    if duplicate_settings:
+        duplicate_settings = int(duplicate_settings)
+    QC_SETTINGS['DISPLAY_DUPLICATES'] = duplicate_settings
+
 
 if getattr(settings, 'QUERYCOUNT', False) and 'THRESHOLDS' in settings.QUERYCOUNT:
     QC_SETTINGS['THRESHOLDS'] = settings.QUERYCOUNT['THRESHOLDS']
