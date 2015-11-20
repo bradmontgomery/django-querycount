@@ -35,7 +35,8 @@ that will be ignored by the middleware.  The default settings are::
             'MIN_QUERY_COUNT_TO_LOG':0
         },
         'IGNORE_REQUEST_PATTERNS': [],
-        'IGNORE_SQL_PATTERNS': []
+        'IGNORE_SQL_PATTERNS': [],
+        'DISPLAY_DUPLICATES': None,
     }
 
 
@@ -61,6 +62,16 @@ setting would bypass the querycount middleware for django-silk sql query::
         'IGNORE_SQL_PATTERNS': [r'silk_']
     }
 
+
+**New in 0.4.0**. The ``QUERYCOUNT['DISPLAY_DUPLICATES']`` setting allows you
+to control how the most common duplicate queries are displayed. If the setting
+is ``None`` (the default), duplicate queries are not displayed. Otherwise, this
+should be an integer. For example, the following setting would always print the
+5 most duplicated queries::
+
+    QUERYCOUNT = {
+        'DISPLAY_DUPLICATES': 5,
+    }
 
 
 License

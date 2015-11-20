@@ -1,6 +1,8 @@
 import re
 import sys
 import timeit
+from collections import Counter
+from textwrap import wrap
 
 from django.conf import settings
 from django.db import connections
@@ -20,6 +22,7 @@ class QueryCountMiddleware(object):
             self.request_path = None
             self.stats = {"request": {}, "response": {}}
             self.dbs = [c.alias for c in connections.all()]
+            self.queries = Counter()
             self._reset_stats()
 
             self._start_time = None
@@ -52,6 +55,15 @@ class QueryCountMiddleware(object):
                     else:
                         self.stats[which][c.alias]['writes'] += 1
                     self.stats[which][c.alias]['total'] += 1
+                    self.queries[q['sql']] += 1
+
+            # We'll show the worst offender; i.e. the query with the most duplicates
+            duplicates = self.queries.most_common(1)
+            if duplicates:
+                sql, count = duplicates[0]
+                self.stats[which][c.alias]['duplicates'] = count
+            else:
+                self.stats[which][c.alias]['duplicates'] = 0
 
     def _ignore_request(self, path):
         """Check to see if we should ignore the request."""
@@ -88,21 +100,33 @@ class QueryCountMiddleware(object):
             else:
                 host_string = self.request_path
             output = self.white('\n{0}\n'.format(host_string))
-            output += "|------|-----------|----------|----------|----------|\n"
-            output += "| Type | Database  |   Reads  |  Writes  |  Totals  |\n"
-            output += "|------|-----------|----------|----------|----------|\n"
+            output += "|------|-----------|----------|----------|----------|------------|\n"
+            output += "| Type | Database  |   Reads  |  Writes  |  Totals  | Duplicates |\n"
+            output += "|------|-----------|----------|----------|----------|------------|\n"
 
         for db, stats in self.stats[which].items():
             if stats['total'] > 0:
-                line = "|{w}|{db}|{reads}|{writes}|{total}|\n".format(
+                line = "|{w}|{db}|{reads}|{writes}|{total}|{duplicates}|\n".format(
                     w=which.upper()[:4].center(6),
                     db=db.center(11),
                     reads=str(stats['reads']).center(10),
                     writes=str(stats['writes']).center(10),
-                    total=str(stats['total']).center(10)
+                    total=str(stats['total']).center(10),
+                    duplicates=str(stats['duplicates']).center(12)
                 )
                 output += self._colorize(line, stats['total'])
-            output += "|------|-----------|----------|----------|----------|\n"
+            output += "|------|-----------|----------|----------|----------|------------|\n"
+
+        return output
+
+    def _duplicate_queries(self, output):
+        """Appends the most common duplicate queries to the given output."""
+        if QC_SETTINGS['DISPLAY_DUPLICATES']:
+            for query, count in self.queries.most_common(QC_SETTINGS['DISPLAY_DUPLICATES']):
+                lines = ['\nRepeated {0} times.'.format(count)]
+                lines += wrap(query)
+                lines = "\n".join(lines) + "\n"
+                output += self._colorize(lines, count)
         return output
 
     def _totals(self, which):
@@ -139,6 +163,7 @@ class QueryCountMiddleware(object):
         count = request_totals[2] + response_totals[2]  # sum total queries
         sum_output = 'Total queries: {0} in {1:.4f}s \n\n'.format(count, elapsed)
         sum_output = self._colorize(sum_output, count)
+        sum_output = self._duplicate_queries(sum_output)
 
         # runserver just prints its output to sys.stderr, so we'll do that too.
         if elapsed >= self.threshold['MIN_TIME_TO_LOG'] and count >= self.threshold['MIN_QUERY_COUNT_TO_LOG']:

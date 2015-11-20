@@ -1,6 +1,14 @@
 History
 -------
 
+0.4.0
++++++
+
+- Included a count for duplicate sql queries. (`issue #7 <https://github.com/bradmontgomery/django-querycount/issues/7>`_)
+- Included a new setting option, ``DISPLAY_DUPLICATES`` to control how many
+  duplicate queries are printed in the shell.
+
+
 0.3.0
 +++++
 
