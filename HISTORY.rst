@@ -1,6 +1,12 @@
 History
 -------
 
+0.4.1
++++++
+
+- Fixed an issue where previous request's queries didn't get reset.
+- Minor output formatting
+
 0.4.0
 +++++
 
