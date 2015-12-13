@@ -45,6 +45,7 @@ class QueryCountMiddleware(object):
         for alias in self.dbs:
             self.stats["request"][alias] = {'writes': 0, 'reads': 0, 'total': 0}
             self.stats["response"][alias] = {'writes': 0, 'reads': 0, 'total': 0}
+        self.queries = Counter()
 
     def _count_queries(self, which):
         for c in connections.all():
