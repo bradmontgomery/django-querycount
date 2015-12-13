@@ -116,8 +116,7 @@ class QueryCountMiddleware(object):
                     duplicates=str(stats['duplicates']).center(12)
                 )
                 output += self._colorize(line, stats['total'])
-            output += "|------|-----------|----------|----------|----------|------------|\n"
-
+                output += "|------|-----------|----------|----------|----------|------------|\n"
         return output
 
     def _duplicate_queries(self, output):
