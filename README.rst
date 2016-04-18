@@ -27,7 +27,7 @@ There are two possible settings for this app: The first defines threshold
 values used to color output, while the second allows you customize requests
 that will be ignored by the middleware.  The default settings are::
 
-    QUERYCOUNT {
+    QUERYCOUNT = {
         'THRESHOLDS': {
             'MEDIUM': 50,
             'HIGH': 200,
