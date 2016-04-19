@@ -45,7 +45,7 @@ interpreted as high or medium (and the color-coded output). In previous versions
 of this app, this settings was called ``QUERYCOUNT_THRESHOLDS`` and that setting
 is still supported.
 
-The ``QUERYCOUT['IGNORE_REQUEST_PATTERNS']`` setting allows you to define a list of
+The ``QUERYCOUNT['IGNORE_REQUEST_PATTERNS']`` setting allows you to define a list of
 regexp patterns that get applied to each request's path. If there is a match,
 the middleware will not be applied to that request. For example, the following
 setting would bypass the querycount middleware for all requests to the admin::
@@ -54,7 +54,7 @@ setting would bypass the querycount middleware for all requests to the admin::
         'IGNORE_REQUEST_PATTERNS': [r'^/admin/']
     }
 
-The ``QUERYCOUT['IGNORE_SQL_PATTERNS']`` setting allows you to define a list of
+The ``QUERYCOUNT['IGNORE_SQL_PATTERNS']`` setting allows you to define a list of
 regexp patterns that ignored to statistic sql query count. For example, the following
 setting would bypass the querycount middleware for django-silk sql query::
 
