@@ -1,6 +1,11 @@
 History
 -------
 
+0.4.2
++++++
+
+- Fixed an issue that may cause an exception if we got a `None` value for the sql query.
+
 0.4.1
 +++++
 
