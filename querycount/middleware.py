@@ -51,7 +51,7 @@ class QueryCountMiddleware(object):
         for c in connections.all():
             for q in c.queries:
                 if not self._ignore_sql(q):
-                    if self.READ_QUERY_REGEX.search(q['sql']) is not None:
+                    if q.get('sql') and self.READ_QUERY_REGEX.search(q['sql']) is not None:
                         self.stats[which][c.alias]['reads'] += 1
                     else:
                         self.stats[which][c.alias]['writes'] += 1
@@ -75,7 +75,7 @@ class QueryCountMiddleware(object):
     def _ignore_sql(self, query):
         """Check to see if we should ignore the sql query."""
         return any([
-            re.search(pattern, query['sql']) for pattern in QC_SETTINGS['IGNORE_SQL_PATTERNS']
+            re.search(pattern, query.get('sql')) for pattern in QC_SETTINGS['IGNORE_SQL_PATTERNS']
         ])
 
     def process_request(self, request):
