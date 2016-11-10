@@ -10,8 +10,13 @@ from django.utils import termcolors
 
 from . qc_settings import QC_SETTINGS
 
+try:
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    MiddlewareMixin = object
 
-class QueryCountMiddleware(object):
+
+class QueryCountMiddleware(MiddlewareMixin):
     """This middleware prints the number of database queries for each http
     request and response. This code is adapted from: http://goo.gl/UUKN0r"""
 
