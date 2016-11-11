@@ -5,3 +5,4 @@ Authors & Contributors
 - Morgan Phillips `<https://github.com/mrrrgn>`_
 - Alonisser `<https://github.com/alonisser>`_
 - GitFree `<https://github.com/GitFree>`_
+- Ryan Kaskel `<https://github.com/ryankask>`_

@@ -1,6 +1,11 @@
 History
 -------
 
+0.5.0
++++++
+
+- Added support for Django 1.10 Middleware.
+
 0.4.2
 +++++
 
