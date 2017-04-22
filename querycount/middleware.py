@@ -18,11 +18,21 @@ except ImportError:
 
 class QueryCountMiddleware(MiddlewareMixin):
     """This middleware prints the number of database queries for each http
-    request and response. This code is adapted from: http://goo.gl/UUKN0r"""
+    request and response. This code is adapted from: http://goo.gl/UUKN0r.
+
+    NOTE: This middleware is predominately written in the pre-Django 1.10 style,
+    and uses the MiddlewareMixin for compatibility:
+
+    https://docs.djangoproject.com/en/1.11/topics/http/middleware/#upgrading-pre-django-1-10-style-middleware
+
+    """
 
     READ_QUERY_REGEX = re.compile("SELECT .*")
 
     def __init__(self, *args, **kwargs):
+        # Call super first, so the MiddlewareMixin's __init__ does its thing.
+        super(QueryCountMiddleware, self).__init__(*args, **kwargs)
+
         if settings.DEBUG:
             self.request_path = None
             self.stats = {"request": {}, "response": {}}
@@ -43,7 +53,6 @@ class QueryCountMiddleware(MiddlewareMixin):
             # query type detection regex
             # TODO: make stats classification regex more robust
             self.threshold = QC_SETTINGS['THRESHOLDS']
-            super(QueryCountMiddleware, self).__init__(*args, **kwargs)
 
     def _reset_stats(self):
         self.stats = {"request": {}, "response": {}}
