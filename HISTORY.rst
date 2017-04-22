@@ -1,6 +1,12 @@
 History
 -------
 
+0.6.0
++++++
+
+- Fixed Issue #14 so that running tests doesn't result in ``AttributeError: 'QueryCountMiddleware' object has no attribute 'get_response'``.
+- Removed the `test_app` and replaced existing tests with very simple smoke tests.
+
 0.5.0
 +++++
 

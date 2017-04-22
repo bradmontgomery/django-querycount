@@ -82,7 +82,12 @@ This code is distributed under the terms of the MIT license.
 Testing
 -------
 
-Works only in context of a django installation venv: cd querycount/tests && python test.py
+Run `python manage.py test querycount` to run the tests. Note that this will
+modify your settings so that your project is in DEBUG mode for the duration
+of the `querycount` tests.
+
+(side-note: this project needs better tests; for the moment, there are only
+smoke tests that set up the middleware and call two simple test views).
 
 
 Contributing
