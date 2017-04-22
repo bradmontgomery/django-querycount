@@ -16,7 +16,7 @@ Installation
     pip install django-querycount
 
 Just add ``querycount.middleware.QueryCountMiddleware`` to your
-``MIDDLEWARE_CLASSES``.
+``MIDDLEWARE``.
 
 Notice that django-querycount is hard coded to work only in DEBUG mode set to true
 
