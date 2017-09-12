@@ -12,6 +12,7 @@ DEFAULT_QC_SETTINGS = {
     'IGNORE_REQUEST_PATTERNS': [],
     'IGNORE_SQL_PATTERNS': [],
     'DISPLAY_DUPLICATES': None,
+    'RESPONSE_HEADER': 'X-DjangoQueryCount-Count'
 }
 
 QC_MIDDLEWARE = {
@@ -49,3 +50,14 @@ class QueryCountTestCase(TestCase):
         # Smoke test for a view that does a single DB queries.
         resp = self.client.get("/count/")
         self.assertEqual(resp.status_code, 200)
+        self.assertEqual(int(resp['X-DjangoQueryCount-Count']), 1)
+
+    def test_header_disabled(self):
+        # Ensure removing the count header is effective
+        disabled_settings = DEFAULT_QC_SETTINGS
+        disabled_settings['RESPONSE_HEADER'] = None
+
+        with self.settings(QUERYCOUNT=disabled_settings):
+            resp = self.client.get("/count/")            
+            self.assertEqual(resp.status_code, 200)
+            self.assertFalse('X-DjangoQueryCount-Count' in resp)

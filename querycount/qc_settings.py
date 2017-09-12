@@ -4,6 +4,7 @@ Default querycount settings.
 """
 
 from django.conf import settings
+from django.test.signals import setting_changed
 
 
 QC_SETTINGS = {
@@ -16,29 +17,45 @@ QC_SETTINGS = {
         'MIN_QUERY_COUNT_TO_LOG': 0
     },
     'DISPLAY_DUPLICATES': None,
+    'RESPONSE_HEADER': 'X-DjangoQueryCount-Count',
 }
 
-if getattr(settings, 'QUERYCOUNT', False) and 'DISPLAY_DUPLICATES' in settings.QUERYCOUNT:
-    duplicate_settings = settings.QUERYCOUNT['DISPLAY_DUPLICATES']
-    if duplicate_settings:
-        duplicate_settings = int(duplicate_settings)
-    QC_SETTINGS['DISPLAY_DUPLICATES'] = duplicate_settings
+def _process_settings(**kwargs):
+    """
+    Apply user supplied settings.
+    """
 
+    # If we are in this method due to a signal, only reload for our settings
+    setting_name = kwargs.get('setting', None) 
+    if setting_name is not None and setting_name != 'QUERYCOUNT':
+        return
 
-if getattr(settings, 'QUERYCOUNT', False) and 'THRESHOLDS' in settings.QUERYCOUNT:
-    QC_SETTINGS['THRESHOLDS'] = settings.QUERYCOUNT['THRESHOLDS']
+    # Support the old-style settings
+    if getattr(settings, 'QUERYCOUNT_THRESHOLDS', False):
+        QC_SETTINGS['THRESHOLDS'] = settings.QUERYCOUNT_THRESHOLDS
 
-if getattr(settings, 'QUERYCOUNT', False) and 'IGNORE_REQUEST_PATTERNS' in settings.QUERYCOUNT:
-    QC_SETTINGS['IGNORE_REQUEST_PATTERNS'] = settings.QUERYCOUNT['IGNORE_REQUEST_PATTERNS']
+    # Apply new-style settings
+    if not getattr(settings, 'QUERYCOUNT', False):
+        return
 
-if getattr(settings, 'QUERYCOUNT', False) and 'IGNORE_SQL_PATTERNS' in settings.QUERYCOUNT:
-    QC_SETTINGS['IGNORE_SQL_PATTERNS'] = settings.QUERYCOUNT['IGNORE_SQL_PATTERNS']
+    # Duplicate display is a special case, configure it specifically
+    if 'DISPLAY_DUPLICATES' in settings.QUERYCOUNT:
+        duplicate_settings = settings.QUERYCOUNT['DISPLAY_DUPLICATES']
+        if duplicate_settings is not None:
+            duplicate_settings = int(duplicate_settings)
+        QC_SETTINGS['DISPLAY_DUPLICATES'] = duplicate_settings
 
-# Support the old-style settings
+    # Apply the rest of the setting overrides
+    for key in ['THRESHOLDS',
+                'IGNORE_REQUEST_PATTERNS',
+                'IGNORE_SQL_PATTERNS',
+                'IGNORE_PATTERNS',
+                'RESPONSE_HEADER']:
+        if key in settings.QUERYCOUNT:
+            QC_SETTINGS[key] = settings.QUERYCOUNT[key]
 
-# Support the old-style settings
-if getattr(settings, 'QUERYCOUNT_THRESHOLDS', False):
-    QC_SETTINGS['THRESHOLDS'] = settings.QUERYCOUNT_THRESHOLDS
+# Perform initial load of settings
+_process_settings()
 
-if getattr(settings, 'QUERYCOUNT', False) and 'IGNORE_PATTERNS' in settings.QUERYCOUNT:
-    QC_SETTINGS['IGNORE_REQUEST_PATTERNS'] = settings.QUERYCOUNT['IGNORE_PATTERNS']
+# Subscribe to setting changes, via unit tests, etc
+setting_changed.connect(_process_settings)

@@ -104,8 +104,14 @@ class QueryCountMiddleware(MiddlewareMixin):
             self.request_path = request.path
             self._end_time = timeit.default_timer()
             self._count_queries("response")
+
+            # Add query count header, if enabled
+            if QC_SETTINGS['RESPONSE_HEADER'] is not None:
+                response[QC_SETTINGS['RESPONSE_HEADER']] = self._calculate_num_queries()
+
             self.print_num_queries()
             self._reset_stats()
+
         return response
 
     def _stats_table(self, which, path='', output=None):
@@ -162,11 +168,9 @@ class QueryCountMiddleware(MiddlewareMixin):
 
     def print_num_queries(self):
         # Request data
-        request_totals = self._totals("request")
         output = self._stats_table("request")
 
         # Response data
-        response_totals = self._totals("response")
         output = self._stats_table("response", output=output)
 
         # Summary of both
@@ -174,7 +178,9 @@ class QueryCountMiddleware(MiddlewareMixin):
             elapsed = self._end_time - self._start_time
         else:
             elapsed = 0
-        count = request_totals[2] + response_totals[2]  # sum total queries
+        
+        count = self._calculate_num_queries()
+
         sum_output = 'Total queries: {0} in {1:.4f}s \n\n'.format(count, elapsed)
         sum_output = self._colorize(sum_output, count)
         sum_output = self._duplicate_queries(sum_output)
@@ -183,3 +189,13 @@ class QueryCountMiddleware(MiddlewareMixin):
         if elapsed >= self.threshold['MIN_TIME_TO_LOG'] and count >= self.threshold['MIN_QUERY_COUNT_TO_LOG']:
             sys.stderr.write(output)
             sys.stderr.write(sum_output)
+
+    def _calculate_num_queries(self):
+        """
+        Calculate the total number of request and response queries.
+        Used for count header and count table.
+        """
+        request_totals = self._totals("request")
+        response_totals = self._totals("response")
+
+        return request_totals[2] + response_totals[2]  # sum total queries

@@ -37,6 +37,7 @@ that will be ignored by the middleware.  The default settings are::
         'IGNORE_REQUEST_PATTERNS': [],
         'IGNORE_SQL_PATTERNS': [],
         'DISPLAY_DUPLICATES': None,
+        'RESPONSE_HEADER': 'X-DjangoQueryCount-Count'
     }
 
 
@@ -62,6 +63,13 @@ setting would bypass the querycount middleware for django-silk sql query::
         'IGNORE_SQL_PATTERNS': [r'silk_']
     }
 
+The ``QUERYCOUNT['RESPONSE_HEADER']`` setting allows you to define a custom response
+header that contains the total number of queries executed. To disable this header, 
+the supply ``None`` as the value:
+
+    QUERYCOUNT = {
+        'RESPONSE_HEADER': None
+    }
 
 **New in 0.4.0**. The ``QUERYCOUNT['DISPLAY_DUPLICATES']`` setting allows you
 to control how the most common duplicate queries are displayed. If the setting
