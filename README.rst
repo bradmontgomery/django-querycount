@@ -65,7 +65,7 @@ setting would bypass the querycount middleware for django-silk sql query::
 
 The ``QUERYCOUNT['RESPONSE_HEADER']`` setting allows you to define a custom response
 header that contains the total number of queries executed. To disable this header, 
-the supply ``None`` as the value:
+the supply ``None`` as the value::
 
     QUERYCOUNT = {
         'RESPONSE_HEADER': None
