@@ -27,7 +27,9 @@ class QueryCountMiddleware(MiddlewareMixin):
 
     """
 
-    READ_QUERY_REGEX = re.compile("SELECT .*")
+    READ_QUERY_REGEX = re.compile(r'SELECT\s+.*')
+    WHERE_CLAUSE_REGEX = re.compile(r'(\s+WHERE\s+)(.*)(\s+(?:GROUP|ORDER|HAVING)\s+)*')
+    ID_REGEX = re.compile(r'(\s*[a-zA-Z_."]+?(?:_id|\."id)"\s*=\s*)\d+(\s*)')
 
     def __init__(self, *args, **kwargs):
         # Call super first, so the MiddlewareMixin's __init__ does its thing.
@@ -64,13 +66,26 @@ class QueryCountMiddleware(MiddlewareMixin):
     def _count_queries(self, which):
         for c in connections.all():
             for q in c.queries:
+                sql = q.get('sql')
                 if not self._ignore_sql(q):
-                    if q.get('sql') and self.READ_QUERY_REGEX.search(q['sql']) is not None:
+                    if sql and self.READ_QUERY_REGEX.search(sql) is not None:
                         self.stats[which][c.alias]['reads'] += 1
                     else:
                         self.stats[which][c.alias]['writes'] += 1
                     self.stats[which][c.alias]['total'] += 1
-                    self.queries[q['sql']] += 1
+
+                    # Replace <some_id>=<some_number> with <some_id>=#number#
+                    # in the WHERE clause to find duplicates that only
+                    # vary by <some_number>, indicating N+1 condition.
+                    where_clause_match = self.WHERE_CLAUSE_REGEX.search(sql)
+                    if where_clause_match:
+                        criteria_clause = self.ID_REGEX.sub(
+                            r'\1#number#\2', where_clause_match.group(2))
+                        repl = 'r\1{}\3' if where_clause_match.group(3) else r'\1{}'
+                        sql = self.WHERE_CLAUSE_REGEX.sub(
+                            repl.format(criteria_clause), sql)
+
+                    self.queries[sql] += 1
 
             # We'll show the worst offender; i.e. the query with the most duplicates
             duplicates = self.queries.most_common(1)
