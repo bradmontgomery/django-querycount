@@ -153,7 +153,7 @@ class QueryCountMiddleware(MiddlewareMixin):
         """Appends the most common duplicate queries to the given output."""
         if QC_SETTINGS['DISPLAY_DUPLICATES']:
             for query, count in self.queries.most_common(QC_SETTINGS['DISPLAY_DUPLICATES']):
-                lines = ['\nExecuted {0} times.'.format(count)]
+                lines = ['\nExecuted {0} time(s).'.format(count)]
                 lines += wrap(query)
                 lines = "\n".join(lines) + "\n"
                 output += self._colorize(lines, count)
