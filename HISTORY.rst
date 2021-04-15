@@ -5,7 +5,8 @@ History
 +++++
 
 - Fixed statistics duplicate count.
-- Fixed version (again)
+- Fixed version (again).
+- Fixed project url.
 
 0.8.1
 +++++
