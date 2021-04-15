@@ -87,13 +87,8 @@ class QueryCountMiddleware(MiddlewareMixin):
 
                     self.queries[sql] += 1
 
-            # We'll show the worst offender; i.e. the query with the most duplicates
-            duplicates = self.queries.most_common(1)
-            if duplicates:
-                sql, count = duplicates[0]
-                self.stats[which][c.alias]['duplicates'] = count
-            else:
-                self.stats[which][c.alias]['duplicates'] = 0
+            duplicates = sum(count for sql, count in self.queries.most_common() if count > 1)
+            self.stats[which][c.alias]['duplicates'] = duplicates
 
     def _ignore_request(self, path):
         """Check to see if we should ignore the request."""
@@ -158,7 +153,7 @@ class QueryCountMiddleware(MiddlewareMixin):
         """Appends the most common duplicate queries to the given output."""
         if QC_SETTINGS['DISPLAY_DUPLICATES']:
             for query, count in self.queries.most_common(QC_SETTINGS['DISPLAY_DUPLICATES']):
-                lines = ['\nRepeated {0} times.'.format(count)]
+                lines = ['\nExecuted {0} times.'.format(count)]
                 lines += wrap(query)
                 lines = "\n".join(lines) + "\n"
                 output += self._colorize(lines, count)
