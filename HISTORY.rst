@@ -1,6 +1,22 @@
 History
 -------
 
+0.8.2
++++++
+
+- Fixed statistics duplicate count.
+- Fixed version (again).
+- Fixed project url.
+
+0.8.1
++++++
+
+- Fixed internal version
+
+0.8.0
++++++
+
+- Improved duplicate detection caused by N+1 conditions.
 
 0.7.0
 +++++
