@@ -1,7 +1,7 @@
 from setuptools import setup
 from querycount import __version__
 
-url = "https://github.com/wsmith323/django-querycount-n1/tarball/{0}".format(__version__)
+url = "https://github.com/bradmontgomery/django-querycount/tarball/{0}".format(__version__)
 
 setup(
     name="django-querycount",

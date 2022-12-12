@@ -1,6 +1,11 @@
 History
 -------
 
+0.8.3
++++++
+
+- Include querystring in host output ([PR #17])
+
 0.8.2
 +++++
 
