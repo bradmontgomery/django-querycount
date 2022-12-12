@@ -96,6 +96,7 @@ class QueryCountMiddleware(MiddlewareMixin):
         if settings.DEBUG and not self._ignore_request(request.path):
             self.host = request.META.get('HTTP_HOST', None)
             self.request_path = request.path
+            self.query_string = request.META['QUERY_STRING']
             self._start_time = timeit.default_timer()
             self._count_queries("request")
 
@@ -120,6 +121,10 @@ class QueryCountMiddleware(MiddlewareMixin):
                 host_string = 'http://{0}{1}'.format(self.host, self.request_path)
             else:
                 host_string = self.request_path
+
+            if self.query_string:
+                host_string += '?{0}'.format(self.query_string)
+
             output = self.white('\n{0}\n'.format(host_string))
             output += "|------|-----------|----------|----------|----------|------------|\n"
             output += "| Type | Database  |   Reads  |  Writes  |  Totals  | Duplicates |\n"
