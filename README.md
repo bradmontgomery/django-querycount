@@ -27,7 +27,8 @@ There are two possible settings for this app: The first defines threshold
 values used to color output, while the second allows you customize requests
 that will be ignored by the middleware. The default settings are:
 
-```QUERYCOUNT = {
+```python
+QUERYCOUNT = {
     'THRESHOLDS': {
         'MEDIUM': 50,
         'HIGH': 200,
@@ -49,9 +50,10 @@ is still supported.
 The `QUERYCOUNT['IGNORE_REQUEST_PATTERNS']` setting allows you to define a list of
 regexp patterns that get applied to each request's path. If there is a match,
 the middleware will not be applied to that request. For example, the following
-setting would bypass the querycount middleware for all requests to the admin::
+setting would bypass the querycount middleware for all requests to the admin:
 
-```QUERYCOUNT = {
+```python
+QUERYCOUNT = {
     'IGNORE_REQUEST_PATTERNS': [r'^/admin/']
 }
 ```
@@ -60,27 +62,33 @@ The `QUERYCOUNT['IGNORE_SQL_PATTERNS']` setting allows you to define a list of
 regexp patterns that ignored to statistic sql query count. For example, the following
 setting would bypass the querycount middleware for django-silk sql query::
 
-````QUERYCOUNT = {
+````python
+QUERYCOUNT = {
     'IGNORE_SQL_PATTERNS': [r'silk_']
-}```
+}
+```
 
 The `QUERYCOUNT['RESPONSE_HEADER']` setting allows you to define a custom response
 header that contains the total number of queries executed. To disable this header,
-the supply `None` as the value::
+the supply `None` as the value:
 
-```QUERYCOUNT = {
+```python
+QUERYCOUNT = {
     'RESPONSE_HEADER': None
-}```
+}
+```
 
-**New in 0.4.0**. The `QUERYCOUNT['DISPLAY_DUPLICATES']` setting allows you
+*New in 0.4.0*. The `QUERYCOUNT['DISPLAY_DUPLICATES']` setting allows you
 to control how the most common duplicate queries are displayed. If the setting
 is `None` (the default), duplicate queries are not displayed. Otherwise, this
 should be an integer. For example, the following setting would always print the
 5 most duplicated queries::
 
-```QUERYCOUNT = {
+```python
+QUERYCOUNT = {
     'DISPLAY_DUPLICATES': 5,
-}```
+}
+```
 
 ## License
 
