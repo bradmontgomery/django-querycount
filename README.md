@@ -60,9 +60,9 @@ QUERYCOUNT = {
 
 The `QUERYCOUNT['IGNORE_SQL_PATTERNS']` setting allows you to define a list of
 regexp patterns that ignored to statistic sql query count. For example, the following
-setting would bypass the querycount middleware for django-silk sql query::
+setting would bypass the querycount middleware for django-silk sql query:
 
-````python
+```python
 QUERYCOUNT = {
     'IGNORE_SQL_PATTERNS': [r'silk_']
 }
@@ -78,11 +78,11 @@ QUERYCOUNT = {
 }
 ```
 
-*New in 0.4.0*. The `QUERYCOUNT['DISPLAY_DUPLICATES']` setting allows you
+_New in 0.4.0_. The `QUERYCOUNT['DISPLAY_DUPLICATES']` setting allows you
 to control how the most common duplicate queries are displayed. If the setting
 is `None` (the default), duplicate queries are not displayed. Otherwise, this
 should be an integer. For example, the following setting would always print the
-5 most duplicated queries::
+5 most duplicated queries:
 
 ```python
 QUERYCOUNT = {
@@ -107,4 +107,3 @@ smoke tests that set up the middleware and call two simple test views).
 
 Bug fixes and new features are welcome! Fork this project and send a Pull Request
 to have your work included. Be sure to add yourself to `AUTHORS.rst`.
-````
