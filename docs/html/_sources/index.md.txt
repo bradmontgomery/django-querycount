@@ -1,0 +1,3 @@
+# django-querycount
+
+Hello world.

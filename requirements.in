@@ -9,5 +9,6 @@ pytest
 pre-commit
 Pygments
 sqlparse
+myst-parser
 sphinx
 toml; python_version < '3.11'
