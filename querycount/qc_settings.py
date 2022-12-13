@@ -4,6 +4,7 @@ Default querycount settings.
 """
 
 from django.conf import settings
+from django.core.management.color import supports_color
 from django.test.signals import setting_changed
 
 QC_SETTINGS = {
@@ -17,7 +18,7 @@ QC_SETTINGS = {
     },
     "DISPLAY_DUPLICATES": None,
     "RESPONSE_HEADER": "X-DjangoQueryCount-Count",
-    "NOCOLOR": False,
+    "NOCOLOR": not supports_color(),
 }
 
 

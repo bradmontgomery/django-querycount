@@ -69,4 +69,5 @@ QUERYCOUNT = {
 ```
 
 _New in 1.0.0_: The `QUERYCOUNT['NOCOLOR']` settings allows you to disable colorized
-output in ther terminal.
+output in ther terminal; This value will default to `False` if your platform supports
+color output.
