@@ -1,0 +1,13 @@
+# Tools needed for development ON django-querycount
+
+pip-tools
+black
+flake8
+isort
+coverage
+pytest
+pre-commit
+Pygments
+sqlparse
+sphinx
+toml; python_version < '3.11'
