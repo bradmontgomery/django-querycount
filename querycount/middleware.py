@@ -47,14 +47,23 @@ class QueryCountMiddleware(MiddlewareMixin):
             self.host = None  # The HTTP_HOST pulled from the request
 
             # colorizing methods
-            self.white = termcolors.make_style(opts=("bold",), fg="white")
-            self.red = termcolors.make_style(opts=("bold",), fg="red")
-            self.yellow = termcolors.make_style(opts=("bold",), fg="yellow")
-            self.green = termcolors.make_style(fg="green")
+            self._setup_colorizing()
 
             # query type detection regex
             # TODO: make stats classification regex more robust
             self.threshold = QC_SETTINGS["THRESHOLDS"]
+
+    def _setup_colorizing(self):
+        if QC_SETTINGS["NOCOLOR"]:
+            self.white = lambda x: x
+            self.red = lambda x: x
+            self.yellow = lambda x: x
+            self.green = lambda x: x
+        else:
+            self.white = termcolors.make_style(opts=("bold",), fg="white")
+            self.red = termcolors.make_style(opts=("bold",), fg="red")
+            self.yellow = termcolors.make_style(opts=("bold",), fg="yellow")
+            self.green = termcolors.make_style(fg="green")
 
     def _reset_stats(self):
         self.stats = {"request": {}, "response": {}}
@@ -214,7 +223,7 @@ class QueryCountMiddleware(MiddlewareMixin):
 
         count = self._calculate_num_queries()
 
-        sum_output = "Total queries: {0} in {1:.4f}s \n\n".format(count, elapsed)
+        sum_output = "Total queries: {0} in {1:.4f} seconds.\n".format(count, elapsed)
         sum_output = self._colorize(sum_output, count)
         sum_output = self._duplicate_queries(sum_output)
 

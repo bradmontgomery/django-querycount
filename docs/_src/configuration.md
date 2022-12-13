@@ -15,7 +15,8 @@ QUERYCOUNT = {
     'IGNORE_REQUEST_PATTERNS': [],
     'IGNORE_SQL_PATTERNS': [],
     'DISPLAY_DUPLICATES': None,
-    'RESPONSE_HEADER': 'X-DjangoQueryCount-Count'
+    'RESPONSE_HEADER': 'X-DjangoQueryCount-Count',
+    'NOCOLOR': False,
 }
 ```
 
@@ -66,3 +67,6 @@ QUERYCOUNT = {
     'DISPLAY_DUPLICATES': 5,
 }
 ```
+
+_New in 1.0.0_: The `QUERYCOUNT['NOCOLOR']` settings allows you to disable colorized
+output in ther terminal.

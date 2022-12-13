@@ -17,6 +17,7 @@ QC_SETTINGS = {
     },
     "DISPLAY_DUPLICATES": None,
     "RESPONSE_HEADER": "X-DjangoQueryCount-Count",
+    "NOCOLOR": False,
 }
 
 
@@ -52,6 +53,7 @@ def _process_settings(**kwargs):
         "IGNORE_SQL_PATTERNS",
         "IGNORE_PATTERNS",
         "RESPONSE_HEADER",
+        "NOCOLOR",
     ]:
         if key in settings.QUERYCOUNT:
             QC_SETTINGS[key] = settings.QUERYCOUNT[key]
