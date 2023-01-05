@@ -25,7 +25,7 @@ docs:
 
 .PHONY: clean
 clean:
-	rm -Rf dist
+	rm -Rf dist django_querycount.egg-info
 
 .PHONY: install
 install:
