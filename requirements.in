@@ -1,0 +1,16 @@
+# Tools needed for development ON django-querycount
+setuptools
+build
+pip-tools
+black
+flake8
+isort
+coverage
+pytest
+pre-commit
+Pygments
+sqlparse
+myst-parser
+sphinx
+toml; python_version < '3.11'
+twine

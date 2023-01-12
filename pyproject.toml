@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["querycount", ]
+
+
+[project]
+name = "django-querycount"
+license = {text = "MIT"}
+keywords = [
+    "django", "querycount", "database", "performance",
+]
+requires-python = ">=3.8"
+authors = [
+  { name="Brad Montgomery", email="brad@bradmontgomery.net" },
+]
+description = "Middleware that Prints the number of DB queries to the runserver console."
+dependencies = [
+    "requests",
+    'importlib-metadata; python_version<"3.8"',
+]
+classifiers = [
+        'Development Status :: 4 - Beta',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Framework :: Django',
+        "Topic :: Utilities",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+"Homepage" = "https://github.com/bradmontgomery/django-querycount"
+"Bug Tracker" = "https://pypi.org/project/django-querycount/issues"
+
+[tool.setuptools.dynamic]
+version = {attr = "querycount.VERSION"}
+readme = {file = ["README.md"]}

@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Configuration &#8212; django-querycount  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Testing" href="testing.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">¶</a></h1>
+<p>There are two possible settings for this app: The first defines threshold
+values used to color output, while the second allows you customize requests
+that will be ignored by the middleware. The default settings are:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QUERYCOUNT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;THRESHOLDS&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;MEDIUM&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+        <span class="s1">&#39;HIGH&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="s1">&#39;MIN_TIME_TO_LOG&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;MIN_QUERY_COUNT_TO_LOG&#39;</span><span class="p">:</span><span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;IGNORE_REQUEST_PATTERNS&#39;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s1">&#39;IGNORE_SQL_PATTERNS&#39;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="s1">&#39;DISPLAY_DUPLICATES&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="s1">&#39;RESPONSE_HEADER&#39;</span><span class="p">:</span> <span class="s1">&#39;X-DjangoQueryCount-Count&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">QUERYCOUNT['THRESHOLDS']</span></code> settings will determine how many queries are
+interpreted as high or medium (and the color-coded output). In previous versions
+of this app, this settings was called <code class="docutils literal notranslate"><span class="pre">QUERYCOUNT_THRESHOLDS</span></code> and that setting
+is still supported.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">QUERYCOUNT['IGNORE_REQUEST_PATTERNS']</span></code> setting allows you to define a list of
+regexp patterns that get applied to each request’s path. If there is a match,
+the middleware will not be applied to that request. For example, the following
+setting would bypass the querycount middleware for all requests to the admin:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QUERYCOUNT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;IGNORE_REQUEST_PATTERNS&#39;</span><span class="p">:</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;^/admin/&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">QUERYCOUNT['IGNORE_SQL_PATTERNS']</span></code> setting allows you to define a list of
+regexp patterns that ignored to statistic sql query count. For example, the following
+setting would bypass the querycount middleware for django-silk sql query:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QUERYCOUNT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;IGNORE_SQL_PATTERNS&#39;</span><span class="p">:</span> <span class="p">[</span><span class="sa">r</span><span class="s1">&#39;silk_&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">QUERYCOUNT['RESPONSE_HEADER']</span></code> setting allows you to define a custom response
+header that contains the total number of queries executed. To disable this header,
+the supply <code class="docutils literal notranslate"><span class="pre">None</span></code> as the value:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QUERYCOUNT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;RESPONSE_HEADER&#39;</span><span class="p">:</span> <span class="kc">None</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><em>New in 0.4.0</em>. The <code class="docutils literal notranslate"><span class="pre">QUERYCOUNT['DISPLAY_DUPLICATES']</span></code> setting allows you
+to control how the most common duplicate queries are displayed. If the setting
+is <code class="docutils literal notranslate"><span class="pre">None</span></code> (the default), duplicate queries are not displayed. Otherwise, this
+should be an integer. For example, the following setting would always print the
+5 most duplicated queries:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">QUERYCOUNT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;DISPLAY_DUPLICATES&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">django-querycount</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="testing.html" title="next chapter">Testing</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Brad Montgomery.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/configuration.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -2,3 +2,5 @@
 *.swp
 .cache/*
 .vscode/*
+.env*
+env*
