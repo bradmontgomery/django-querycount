@@ -83,7 +83,7 @@ class QueryCountMiddleware(MiddlewareMixin):
                             r'\1#number#\2', where_clause_match.group(2))
                         repl = 'r\1{}\3' if where_clause_match.group(3) else r'\1{}'
                         sql = self.WHERE_CLAUSE_REGEX.sub(
-                            repl.format(criteria_clause), sql)
+                            repl.format(criteria_clause.replace('\\', '\\\\')), sql)
 
                     self.queries[sql] += 1
 
